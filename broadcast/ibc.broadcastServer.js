@@ -5,33 +5,33 @@
  */
 
 // Set The global variable base
-var insomniacbychoice = insomniacbychoice || {};
+var Insomniacbychoice = Insomniacbychoice || {};
 
 (function () {
     'use strict'; // Because we’re doing things right from the start ¬L¬`
-    
-    insomniacbychoice.broadcastServer = function (config) {
+
+    Insomniacbychoice.broadcastServer = function (config) {
 
         var self = this;
-        
+
         config = config || {};
-        
+
         /***!Set all the appropriate methods for the viewer*/
         this.prototype = {
-            
+
             /***!Initialize the server
              * Create the base tokens and setup the broadcast server.
              */
             initialize :
                 function () {},
-    
+
             /***!Initiate a new connection when a viewer connects
              * Create a unique handshake for the viewer.
              *  @param  (socket)  Socket connection of the new viewer
              */
             newConnection :
                 function (socketConnection) {},
-            
+
             /***!Drop connection
              * Action performed upon a socket dropped connection. This includes
              * cleanup and removal from the global room and chat as well as
@@ -40,7 +40,7 @@ var insomniacbychoice = insomniacbychoice || {};
              */
             dropConnection :
                 function (socketConnection) {},
-            
+
             /***!Process a new registrant
              * Performs a check of the potential registrant and adds
              * the viewer to the database upon successfully verifying.
@@ -49,7 +49,7 @@ var insomniacbychoice = insomniacbychoice || {};
              */
             processRegistration :
                 function (potentialRegistrant, password) {},
-            
+
             /***!Process a viewer login
              * Check the user to the database and login the user
              *   @param (str)    username
@@ -57,21 +57,21 @@ var insomniacbychoice = insomniacbychoice || {};
              */
             processLogin :
                 function (username, password) {},
-            
+
             /***!Assign a moderator
              * Convert a viewer moderator level permissions
              *  @param  (str)   viewerID    The viewerID of the new moderator
              */
             assignModerator :
                 function (viewerID) {},
-            
+
             /***!Revoke a moderator
              * Revoke a viewer’s moderation level permissions
              *  @param  (str)   viewerID    The viewerID of the old moderator
              */
             revokeModerator :
                 function (viewerID) {},
-            
+
             /***!Send an action
              * Send an action to the global or to a specific viewer
              *  @param  (str)   action  The action to send
@@ -80,21 +80,21 @@ var insomniacbychoice = insomniacbychoice || {};
              */
             sendAction :
                 function (action, vars, to) {},
-       
+
             /***!Assign an administrator
              * Convert a viewer moderator level permissions
              *  @param  (str)   viewerID    The viewerID of the new moderator
              */
             assignAdministrator :
                 function (viewerID) {},
-            
+
             /***!Revoke an administrator
              * Revoke a viewer’s moderation level permissions
              *  @param  (str)   viewerID    The viewerID of the old moderator
              */
             assignBroadcaster :
                 function (viewerID) {},
-            
+
             /***!Process a chat message
              * Receive a chat message from a user to broadcast
              *  @param  (str)   messageStr  Message to transmit
@@ -102,7 +102,7 @@ var insomniacbychoice = insomniacbychoice || {};
              */
             chatMessage :
                 function (messageStr, from) {},
-            
+
             /***!Process a direct message
             * Receive and process a direct message.
             *   @param  (str)   messageStr  Message to transmit
@@ -111,14 +111,14 @@ var insomniacbychoice = insomniacbychoice || {};
             */
             directMessage :
                 function (messageStr, from, to) {}
-            
+
         };
-        
+
         // Initialize the object
         this.initialize(config);
-        
+
         return this;
-        
+
     };
 
 }())();

@@ -1,4 +1,3 @@
-/*global document */
 /**
  * InsomniacByChoice Base Object
  *   @contributors:       „
@@ -6,10 +5,11 @@
  */
 
 // Set The global variable base
-var	Insomniacbychoice = Insomniacbychoice || {};
+var    Insomniacbychoice = Insomniacbychoice || {};
 
 (function () {
-	"use strict"; // Because we’re doing things right from the start ¬L¬`
+
+    "use strict"; // Because we’re doing things right from the start ¬L¬`
 
     Insomniacbychoice.voicerecognition.Command = function (regExpString, callback) {
 
@@ -96,9 +96,9 @@ var	Insomniacbychoice = Insomniacbychoice || {};
 
                 // Example context update
                 insomniacbychoice.voicerecognition.context    = {
-                    lastCommand	    : commandString,
-                    commandType		: 'gratitude',
-                    commandResult	: null
+                    lastCommand        : commandString,
+                    commandType        : 'gratitude',
+                    commandResult    : null
                 };
 
              */

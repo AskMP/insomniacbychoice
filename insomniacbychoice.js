@@ -6,42 +6,42 @@
  */
 
 // Set The global variable base
-var	Insomniacbychoice = Insomniacbychoice || {};
+var Insomniacbychoice = Insomniacbychoice || {};
 
 (function () {
-	"use strict"; // Because we’re doing things right from the start ¬L¬`
+    "use strict"; // Because we’re doing things right from the start ¬L¬`
 
-	Insomniacbychoice = function () {
+    Insomniacbychoice = function () {
 
-		var self = this;
+        var self = this;
 
-		/***!Set all the appropriate methods for the viewer*/
+        /***!Set all the appropriate methods for the viewer*/
         this.prototype = {
 
             $ : function (domElement) {
 
                 // Check to see if the request is using a selector or DOM element
-				if (typeof domElement === 'string') {
+                if (typeof domElement === 'string') {
 
                     // Perform the appropriate action dependant upon the initial character
-					switch (domElement.substring(0, 1)) {
+                    switch (domElement.substring(0, 1)) {
 
                     // Use the class name selector instead of the query selector to get all dom elements of the class
-					case '.':
-						domElement = document.getElementsByClassName(domElement);
-				        break;
+                    case '.':
+                        domElement = document.getElementsByClassName(domElement);
+                        break;
 
                     // ID selectors are fairly straight forward
-					case '#':
-						domElement = document.getElementById(domElement.substring(1));
+                    case '#':
+                        domElement = document.getElementById(domElement.substring(1));
                         break;
 
                     // For all other requests, perform the new querySelector method which allows for an extensive ability
                     default:
                         domElement = document.querySelector(domElement);
-					}
+                    }
 
-				}
+                }
 
 
                 if (domElement && !domElement.length) {
@@ -61,7 +61,7 @@ var	Insomniacbychoice = Insomniacbychoice || {};
              *  @param  (str)   className   The class to append to the element(s)
              *  @param  (fn)    callback    (Optional) Callback function to run upon completion
              */
-			addClass : function (domElement, className, callback) {
+            addClass : function (domElement, className, callback) {
 
                 // Set for looping through the requested dom elements
                 var i;
@@ -86,7 +86,7 @@ var	Insomniacbychoice = Insomniacbychoice || {};
                     callback();
                 }
 
-			},
+            },
 
             /***!Remove Class to DOM element
              * Remove a class to a dom element or dom elements
@@ -171,9 +171,9 @@ var	Insomniacbychoice = Insomniacbychoice || {};
 
             }
 
-		};
+        };
 
-	};
+    };
 
     Insomniacbychoice = new Insomniacbychoice();
 

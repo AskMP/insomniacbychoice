@@ -1,4 +1,4 @@
-/*global window, SpeechSynthesisUtterance, setInterval, clearInterval */
+/*global window, SpeechSynthesisUtterance, setInterval, clearInterval, console */
 /**
  * InsomniacByChoice Voice Recognition
  *   @contributors:       „
@@ -6,56 +6,56 @@
  */
 
 // Set The global variable base
-var Insomniacbychoice	= Insomniacbychoice || {};
+var Insomniacbychoice = Insomniacbychoice || {};
 
 // Check for the voice recognition capabilities
-var SpeechRecognition	= window.webkitSpeechRecognition || false;
+var SpeechRecognition = window.webkitSpeechRecognition || false;
 
 // Check for the speech recognition capabilities
-var speechSynthesis		= window.speechSynthesis || false;
+var speechSynthesis = window.speechSynthesis || false;
 
 (function () {
     'use strict'; // Because we’re doing things right from the start ¬L¬`
 
     Insomniacbychoice.voicerecognition = function () {
 
-		var self = this;
+        var self = this;
 
-		this.ears				= null;
-		this.voice				= null;
-		this.listening			= false;
+        this.ears               = null;
+        this.voice              = null;
+        this.listening          = false;
         this.currentlyListening = false;
         this.hearingAid         = null;
         this.pausedListening    = false;
-		this.canListen			= false;
-		this.canSpeak			= false;
+        this.canListen          = false;
+        this.canSpeak           = false;
         this.utterance          = null;
-		this.domElements		= {
-			recognizedPhrase: false,
+        this.domElements        = {
+            recognizedPhrase: false,
             responseMessage : false,
-			statusIndicator	: false
-		};
-		this.availableCommands	= [];
-		this.context			= {
-			lastCommand		: null,
-			commandType		: null,
-			commandResult	: null
-		};
+            statusIndicator    : false
+        };
+        this.availableCommands  = [];
+        this.context            = {
+            lastCommand     : null,
+            commandType     : null,
+            commandResult   : null
+        };
 
-		/***!Set all the appropriate methods for the viewer*/
+        /***!Set all the appropriate methods for the viewer*/
         this.prototype = {
 
             // Setup the speech recognition server and check if the browser can speak
-			initialize : function () {
+            initialize : function () {
 
                 // Only activate listening if it is available
-				if (SpeechRecognition) {
+                if (SpeechRecognition) {
 
                     // Use the current global variable so as to add for more browsers easily later
-					self.ears = new SpeechRecognition();
+                    self.ears = new SpeechRecognition();
 
                     // Confirm that the browser can hear and parse speech
-					self.canListen = true;
+                    self.canListen = true;
 
                     // Assign the speech callbacks to the appropriate equivalents
                     self.ears.onstart   = self.onStartListening;
@@ -63,20 +63,20 @@ var speechSynthesis		= window.speechSynthesis || false;
                     self.ears.onerror   = self.onErrorListening;
                     self.ears.onresult  = self.onListenResult;
 
-				}
+                }
 
                 // Only activate speech sythesis if it is available
-				if (speechSynthesis) {
+                if (speechSynthesis) {
 
                     // Use the current global variable so as to add for more browsers easily
-					self.voice = speechSynthesis;
+                    self.voice = speechSynthesis;
 
                     // Confirm that the browser can speak
-					self.canSpeak = true;
+                    self.canSpeak = true;
 
-				}
+                }
 
-			},
+            },
 
             // Commence listening and setup the interval check
             beginListening : function () {
@@ -122,17 +122,17 @@ var speechSynthesis		= window.speechSynthesis || false;
             },
 
             // Start listing callback
-			onStartListening : function () {
+            onStartListening : function () {
 
                 // Confirm that the browser is currently listening
                 self.currentlyListening = true;
 
                 // If a status indicator exists, append an active class
-				if (self.domElements.statusIndicator) {
+                if (self.domElements.statusIndicator) {
                     Insomniacbychoice.addClass(self.domElements.statusIndicator, 'active');
                 }
 
-			},
+            },
 
             // End listening callback
             onEndListening : function () {
@@ -169,8 +169,15 @@ var speechSynthesis		= window.speechSynthesis || false;
             },
 
             // Error listening or getting response
-            onErrorListening : function (error) {
+            onErrorListening : function (errorMessage) {
                 // Need to populate with error switch case
+                if (errorMessage) {
+
+                    //Perform an action here
+                    console.log(errorMessage);
+
+                }
+
             },
 
             // Recognized literation callback
@@ -270,14 +277,14 @@ var speechSynthesis		= window.speechSynthesis || false;
 
             }
 
-		};
+        };
 
         // Perform the initialization
         this.initialize();
 
         return this;
 
-	};
+    };
 
     Insomniacbychoice.voicerecognition = new Insomniacbychoice.voicerecognition();
 
