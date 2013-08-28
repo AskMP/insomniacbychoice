@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+	</head>
+	<body>
+		<header class="container">
+			<div class="row">
+				<div class="col-12 col-lg-12">
+					<div class="page-header">
+						<h1>HTML5 Toronto Broadcast Tool</h1>
+					</div>
+				</div>
+			</div>
+		</header>
+		<section class="container">
+			<div class="row">
+				<section class="col-lg-9">
+					<video id="slideDeck" poster="//placehold.it/1280x720&text=Slide+Deck" width="100%" scale="1"></video>
+				</section>
+				<aside class="col-lg-3">
+					<div class="row">
+						<div class="col-12 col-lg-12">
+							<video id="videoFeed" poster="//placehold.it/480x320&text=Video+Feed" width="100%" scale="1"></video>
+						</div>
+					</div>
+					<div class="row" style="margin-top: 5px;">
+						<div class="col-12 col-lg-12">
+							<div class="panel panel-primary">
+								<div class="panel-heading">
+									<h3 class="panel-title">Conversation</h3>
+								</div>
+								<div class="panel-body" style="height: 195px;">
+									
+								</div>
+								<div class="panel-footer">
+									<div class="input-group">
+										<input type="text" class="form-control">
+										<span class="input-group-btn">
+											<button class="btn btn-success" type="button"><i class="icon-comment" alt="Comment"></i></button>
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</aside>
+			</div>
+			<div class="row">
+				<div class="col-6 col-lg-6">
+					<a class="btn btn-primary" href="#"><i class="icon-twitter"></i> Tweet</a>
+				</div>
+				<div class="col-3 col-lg-3" style="text-align: right;">
+					<button id="pleaseRepeat" class="btn btn-danger"><i class="icon-volume-up"></i> Speak Up</button>
+					<button id="pleaseRepeat" class="btn btn-warning"><i class="icon-refresh"></i> Please Repeat</button>
+				</div>
+			</div>
+		</section>
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+		<script src="http://broadcast.htmltoronto.ca:8890/socket.io/socket.io.js"></script>
+		<script type="text/javascript" src="/insomniacbychoice/broadcast/ibc.viewer.js"></script>
+		<script>
+		// var me = new Insomniacbychoice.viewer();
+		</script>
+	</body>
+</html>
