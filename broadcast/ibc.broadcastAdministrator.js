@@ -1,3 +1,4 @@
+/*global io */
 /**
  * InsomniacByChoice Broadcast Administrator
  *   @contributors:       „
@@ -14,13 +15,29 @@ var Insomniacbychoice = Insomniacbychoice || {};
 
         var self = this;
 
-        this.connection     = null;
+        this.serverURL      = config.serverURL || '';
+
+        this.connection     = io.connect(this.serverURL);
+        this.broadcaster    = null;
+        this.channelID      = null;
+        this.moderators     = [];
+        this.viewers        = [];
 
         /***!Set all the appropriate methods for the viewer*/
         this.prototype = {
 
-            assignModerator : function (viewerID) {},
-            revokeModerator : function (viewerID) {}
+            initialize :
+                function () {},
+
+            assignModerator :
+                function (viewerID) {
+                    self.connection.emit('assignModerator', {viewerID: viewerID});
+                },
+
+            revokeModerator :
+                function (viewerID) {
+                    self.connection.emit('revokeModerator', {viewerID: viewerID});
+                }
 
         };
 

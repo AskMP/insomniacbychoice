@@ -1,3 +1,4 @@
+/*global require */
 /**
  * InsomniacByChoice Broadcast Server
  *   @contributors:       „
@@ -5,7 +6,10 @@
  */
 
 // Set The global variable base
-var Insomniacbychoice = Insomniacbychoice || {};
+var Insomniacbychoice   = Insomniacbychoice || {},
+    gravatar            = require('gravatar'),
+    MongoClient         = require('mongodb').MongoClient,
+    format              = require('util').format;
 
 (function () {
     'use strict'; // Because we’re doing things right from the start ¬L¬`
@@ -14,7 +18,26 @@ var Insomniacbychoice = Insomniacbychoice || {};
 
         var self = this;
 
+        this.io                 = require('socket.io');
+        this.mongoDatabase      = 'ibcBroadcast';
+        this.broadcaster        = null;
+        this.channelID          = null;
+        this.channelName        = 'Untitled Channel';
+        this.administrators     = [];
+        this.moderators         = [];
+        this.viewers            = [];
+        this.limbo              = [];
+        this.gravatarConfig     = {
+            s: '72',    // Size
+            r: 'pg',    // Rating (g, pg, r, x)
+            d: '404'    // Default for none
+        };
+
         config = config || {};
+
+        this.config = {
+            port : config.port || '8890'
+        };
 
         /***!Set all the appropriate methods for the viewer*/
         this.prototype = {
@@ -23,14 +46,52 @@ var Insomniacbychoice = Insomniacbychoice || {};
              * Create the base tokens and setup the broadcast server.
              */
             initialize :
-                function () {},
+                function () {
+
+                    self.io.listen(self.config.port);
+
+                    // Basic connection events
+                    self.io.on('connection', self.newConnection);
+                    self.io.on('disconnect', self.dropConnection);
+
+                    // All assigning and revoking processes will require administrative level access to perform actions
+                    self.io.on('assignModerator', self.assignModerator);
+                    self.io.on('assignbroadcaster', self.assignBroadcaster);
+                    self.io.on('assignAdministrator', self.assignAdministrator);
+                    self.io.on('revokeModerator', self.revokeModerator);
+
+                },
 
             /***!Initiate a new connection when a viewer connects
              * Create a unique handshake for the viewer.
              *  @param  (socket)  Socket connection of the new viewer
              */
             newConnection :
-                function (socketConnection) {},
+                function (socketConnection) {
+                    self.limbo[socketConnection.id] = socketConnection;
+                    socketConnection.emit('handshake', {greeting: 'Hello!'});
+
+                    // User related events
+                    socketConnection.on('loginAttempt', function (potentialViewer) {
+
+                         /***********************************************************
+                         * Should be using Socket.IO’s native authorization method  *
+                         * https://github.com/LearnBoost/socket.io/wiki/Authorizing *
+                         ************************************************************/
+
+                        // Ensure that the appropriate values are set for the potential user
+                        if (typeof potentialViewer !== 'object' || !potentialViewer.email || !potentialViewer.password) {
+                            socketConnection.emit('error', {message: 'Invalid login format. Object is required with “email” and “password” keys.'});
+                        }
+
+                        // Check the credentials of the user via the email and password
+                        self.validateUserCredentials(potentialViewer, socketConnection);
+
+                    });
+
+                    socketConnection.on('registrationAttempt', self.processRegistration);
+                    socketConnection.on('updateViewerProfile', self.updateViewerProfile);
+                },
 
             /***!Drop connection
              * Action performed upon a socket dropped connection. This includes
@@ -48,15 +109,80 @@ var Insomniacbychoice = Insomniacbychoice || {};
              *   @param (str)    password
              */
             processRegistration :
-                function (potentialRegistrant, password) {},
+                function (potentialRegistrant) {},
+
+            validateUserCredentials :
+                function (potentialViewer, socketConnection) {
+
+                    MongoClient.connect('mongodb://127.0.0.1:27017/' + self.mongoDatabase, function (err, db) {
+
+                        if (err) {
+                            throw err;
+                        }
+
+                        var collection = db.collection('registered_members');
+
+                        collection.find({ email : potentialViewer.email, password : potentialViewer.password }, function (err, items) {
+
+                            if (err) {
+                                throw err;
+                            }
+
+                            // If the user is invalid, emit the appropriate error
+                            if (!items || items.length === 0) {
+                                socketConnection.emit('error', {message: 'Invalid login format. Object is required with “email” and “password” keys.'});
+
+                                // Otherwise, process the user
+                            } else {
+
+                                self.processLogin(potentialViewer, socketConnection);
+
+                            }
+                        });
+
+                    });
+
+                },
 
             /***!Process a viewer login
              * Check the user to the database and login the user
-             *   @param (str)    username
-             *   @param (str)    password
+             *   @param (obj)    potentialUser
              */
             processLogin :
-                function (username, password) {},
+                function (validUser, socketConnection) {
+
+                    // Delete the limbo item
+                    delete self.limbo[socketConnection.id];
+
+                    // Create the viewer item
+                    self.viewers[socketConnection.id] = socketConnection;
+
+                    if (validUser.alias) {
+                        /****************************
+                         * Broadcast new viewer bio *
+                         ****************************/
+
+                        self.io.broadcast.emit('newViewer', {
+                            alias       : validUser.alias,
+                            given_name  : (validUser.allowName) ? validUser.given_name : null,
+                            family_name : (validUser.allowName) ? validUser.family_name : null,
+                            gravatar    : self.captureGravatar(validUser.email)
+                        });
+
+                    } else {
+
+                        socketConnection.emit('requestAlias', {message : 'What shall we call you?'});
+
+                    }
+
+                },
+
+            /***!Update the viewer details
+             * Update any details of the viewer just as name, twitter or password
+             *   @param (obj)    viewerDetails
+             */
+            updateViewerProfile :
+                function (viewerDetails) {},
 
             /***!Assign a moderator
              * Convert a viewer moderator level permissions
@@ -110,12 +236,17 @@ var Insomniacbychoice = Insomniacbychoice || {};
             *   @param  (str)   to          The receiver ID string
             */
             directMessage :
-                function (messageStr, from, to) {}
+                function (messageStr, from, to) {},
+
+            captureGravatar :
+                function (email) {
+                    return gravatar.url(email, self.gravatarConfig);
+                }
 
         };
 
         // Initialize the object
-        this.initialize(config);
+        this.initialize();
 
         return this;
 
